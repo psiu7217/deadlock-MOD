@@ -1,0 +1,352 @@
+/* Deadlock Personal Toolkit v0.1 */
+
+.DLToolkitOverlay {
+    width: 100%;
+    height: 100%;
+}
+
+.DLTKHidden {
+    visibility: collapse;
+}
+
+.DLTKLauncher {
+    horizontal-align: right;
+    vertical-align: top;
+    margin-top: 132px;
+    margin-right: 18px;
+    width: 62px;
+    height: 30px;
+    background-color: #15191ddd;
+    border: 1px solid #7f8d98aa;
+    border-radius: 4px;
+    box-shadow: 0px 2px 8px #00000088;
+}
+
+.DLTKLauncher:hover {
+    background-color: #232a30ee;
+    border-color: #b8c3caaa;
+}
+
+.DLTKLauncher Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #e7edf1;
+    font-size: 14px;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+.DLTKSettings {
+    width: 760px;
+    height: 640px;
+    horizontal-align: center;
+    vertical-align: center;
+    background-color: #111519f4;
+    border: 1px solid #5f6b74cc;
+    border-radius: 7px;
+    box-shadow: 0px 10px 38px #000000cc;
+    flow-children: down;
+}
+
+.DLTKHeader {
+    width: 100%;
+    height: 72px;
+    padding: 14px 16px 12px 20px;
+    background-color: #1a2025;
+    border-bottom: 1px solid #39434b;
+    flow-children: right;
+}
+
+.DLTKHeaderText {
+    width: fill-parent-flow(1.0);
+    height: 100%;
+    flow-children: down;
+}
+
+.DLTKTitle {
+    color: #f0f4f7;
+    font-size: 23px;
+    font-weight: bold;
+}
+
+.DLTKSubtitle {
+    margin-top: 2px;
+    color: #8e9aa3;
+    font-size: 13px;
+}
+
+.DLTKCloseButton {
+    width: 34px;
+    height: 34px;
+    horizontal-align: right;
+    vertical-align: center;
+    background-color: #2a3137;
+    border-radius: 4px;
+}
+
+.DLTKCloseButton:hover {
+    background-color: #3b454d;
+}
+
+.DLTKCloseButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #dce4e9;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.DLTKBody {
+    width: 100%;
+    height: fill-parent-flow(1.0);
+    flow-children: right;
+}
+
+.DLTKSidebar {
+    width: 178px;
+    height: 100%;
+    padding: 18px 12px;
+    background-color: #151a1f;
+    border-right: 1px solid #303941;
+    flow-children: down;
+}
+
+.DLTKTabButton {
+    width: 100%;
+    height: 42px;
+    margin-bottom: 6px;
+    padding-left: 14px;
+    background-color: #00000000;
+    border-radius: 4px;
+}
+
+.DLTKTabButton:hover {
+    background-color: #242b31;
+}
+
+.DLTKTabSelected {
+    background-color: #2c353c;
+    border-left: 3px solid #b7c9d4;
+}
+
+.DLTKTabButton Label {
+    vertical-align: center;
+    color: #b8c2c9;
+    font-size: 16px;
+}
+
+.DLTKTabSelected Label {
+    color: #ffffff;
+    font-weight: bold;
+}
+
+.DLTKFutureTabs {
+    width: 100%;
+    height: fill-parent-flow(1.0);
+    vertical-align: bottom;
+}
+
+.DLTKSmallMuted {
+    vertical-align: bottom;
+    color: #63707a;
+    font-size: 11px;
+}
+
+.DLTKContent {
+    width: fill-parent-flow(1.0);
+    height: 100%;
+    padding: 24px 26px;
+}
+
+.DLTKPage {
+    width: 100%;
+    height: 100%;
+    flow-children: down;
+}
+
+.DLTKPageTitle {
+    color: #f2f5f7;
+    font-size: 26px;
+    font-weight: bold;
+}
+
+.DLTKDescription {
+    margin-top: 4px;
+    margin-bottom: 18px;
+    color: #8d9aa3;
+    font-size: 14px;
+}
+
+.DLTKCard {
+    width: 100%;
+    padding: 8px 16px;
+    background-color: #181e23;
+    border: 1px solid #2d373f;
+    border-radius: 5px;
+    flow-children: down;
+}
+
+.DLTKSettingRow {
+    width: 100%;
+    min-height: 72px;
+    padding: 12px 0px;
+    flow-children: right;
+}
+
+.DLTKSettingText {
+    width: fill-parent-flow(1.0);
+    vertical-align: center;
+    flow-children: down;
+}
+
+.DLTKSettingName {
+    color: #e2e8ec;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.DLTKSettingHint {
+    margin-top: 3px;
+    color: #7f8c95;
+    font-size: 12px;
+}
+
+.DLTKDivider {
+    width: 100%;
+    height: 1px;
+    background-color: #2b343b;
+}
+
+.DLTKValueButton,
+.DLTKActionButton {
+    vertical-align: center;
+    min-width: 100px;
+    height: 34px;
+    padding: 0px 14px;
+    background-color: #29333a;
+    border: 1px solid #44515a;
+    border-radius: 4px;
+}
+
+.DLTKValueButton:hover,
+.DLTKActionButton:hover {
+    background-color: #354149;
+    border-color: #647681;
+}
+
+.DLTKValueButton Label,
+.DLTKActionButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #e5ecef;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.DLTKValueButton.DLTKOff {
+    background-color: #352526;
+    border-color: #654445;
+}
+
+.DLTKStepper {
+    vertical-align: center;
+    flow-children: right;
+}
+
+.DLTKSoundControls {
+    vertical-align: center;
+    flow-children: right;
+}
+
+.DLTKSoundSelected {
+    width: 150px;
+    height: 34px;
+    margin: 0px 8px;
+    flow-children: down;
+    vertical-align: center;
+}
+
+.DLTKSoundName {
+    vertical-align: center;
+    color: #e5ecef;
+    font-size: 15px;
+    font-weight: bold;
+}
+
+.DLTKSoundEvent {
+    vertical-align: center;
+    color: #7f8c95;
+    font-size: 11px;
+}
+
+.DLTKStepButton {
+    width: 34px;
+    height: 34px;
+    background-color: #29333a;
+    border: 1px solid #44515a;
+    border-radius: 4px;
+}
+
+.DLTKStepButton:hover {
+    background-color: #354149;
+}
+
+.DLTKStepButton Label {
+    horizontal-align: center;
+    vertical-align: center;
+    color: #eef2f5;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.DLTKStepValue {
+    width: 78px;
+    vertical-align: center;
+    text-align: center;
+    color: #e5ecef;
+    font-size: 14px;
+}
+
+.DLTKStatusCard {
+    width: 100%;
+    margin-top: 16px;
+    padding: 12px 16px;
+    background-color: #14191d;
+    border: 1px solid #2b343b;
+    border-radius: 5px;
+    flow-children: down;
+}
+
+.DLTKStatusRow {
+    width: 100%;
+    height: 32px;
+    flow-children: right;
+}
+
+.DLTKStatusLabel {
+    width: fill-parent-flow(1.0);
+    vertical-align: center;
+    color: #84919a;
+    font-size: 13px;
+}
+
+.DLTKStatusValue {
+    vertical-align: center;
+    horizontal-align: right;
+    color: #d9e1e6;
+    font-size: 13px;
+    font-weight: bold;
+}
+
+.DLTKAboutCard {
+    padding-top: 18px;
+    padding-bottom: 18px;
+}
+
+.DLTKParagraph {
+    width: 100%;
+    margin-top: 4px;
+    margin-bottom: 18px;
+    color: #9aa6ae;
+    font-size: 13px;
+}

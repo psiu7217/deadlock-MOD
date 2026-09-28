@@ -1,0 +1,36 @@
+# Generated build output and local staging
+/build/
+/dist/
+/install-backups/
+/tmp/
+/temp/
+/.cache/
+/cache/
+/content/
+/game/
+
+# Logs, temporary files, and backups
+*.log
+*.bak
+*.tmp
+*.temp
+
+# Compiled game packages and Source 2 resources
+*.vpk
+*.vxml_c
+*.vjs_c
+*.vcss_c
+*.vsnd_c
+*.vsndevts_c
+*.vrman_c
+
+# Local tools and editor state
+.vscode/
+.idea/
+.vs/
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~

@@ -1,0 +1,17 @@
+{
+  "runes": {
+    "enabled": true,
+    "first_spawn_seconds": 300,
+    "interval_seconds": 300,
+    "warning_lead_seconds": 30,
+    "alert_window_seconds": 3
+  },
+  "party": {
+    "enabled": true,
+    "target_lane_preference": "lanepreference_1"
+  },
+  "ui": {
+    "default_tab": "runes",
+    "launcher_label": "DLTK"
+  }
+}

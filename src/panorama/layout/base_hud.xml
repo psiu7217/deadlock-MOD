@@ -1,0 +1,314 @@
+<!--
+Deadlock Personal Toolkit v0.1
+
+The small WindowRoot/CitadelHud wrapper is adapted from the
+Predi-i/Deadlock-UI-Mods Bridge-Buff-Reminder layout (Apache-2.0).
+Modified to include DLTK resources and settings UI on 2026-09-28.
+See THIRD_PARTY_NOTICES.md and LICENSES/Apache-2.0.txt.
+
+IMPORTANT:
+This is a minimal base_hud wrapper based on the current public Deadlock layout
+shape. Codex must compare it with the installed Deadlock build before compiling.
+If another mod already overrides base_hud.xml, merge the DLTK includes/overlay
+rather than blindly replacing that mod.
+-->
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/base.vcss_c" />
+        <include src="s2r://panorama/styles/dltoolkit.vcss_c" />
+    </styles>
+
+        <scripts>
+            <include src="s2r://panorama/scripts/dltoolkit_config.vjs_c" />
+            <include src="s2r://panorama/scripts/dltoolkit_core.vjs_c" />
+            <include src="s2r://panorama/scripts/modules/runes.vjs_c" />
+            <include src="s2r://panorama/scripts/modules/party.vjs_c" />
+            <include src="s2r://panorama/scripts/ui/settings.vjs_c" />
+    </scripts>
+
+    <Panel class="WindowRoot"
+           hittest="false"
+           hittestchildren="true"
+           disallowedstyleflags="hover,descendantfocus">
+
+        <CitadelHud id="Hud" hittest="false" />
+
+        <Panel id="DLToolkitOverlay"
+               class="DLToolkitOverlay"
+               hittest="false"
+               hittestchildren="true">
+
+            <Button id="DLToolkitLauncher"
+                    class="DLTKLauncher"
+                    hittest="true"
+                    onactivate="$.DLTK.UI.toggle();">
+                <Label text="DLTK" />
+            </Button>
+
+            <Panel id="DLToolkitSettings"
+                   class="DLTKSettings DLTKHidden"
+                   hittest="true"
+                   hittestchildren="true">
+
+                <Panel class="DLTKHeader">
+                    <Panel class="DLTKHeaderText">
+                        <Label class="DLTKTitle" text="Deadlock Toolkit" />
+                        <Label class="DLTKSubtitle" text="Personal HUD utilities" />
+                    </Panel>
+
+                    <Button class="DLTKCloseButton"
+                            hittest="true"
+                            onactivate="$.DLTK.UI.close();">
+                        <Label text="X" />
+                    </Button>
+                </Panel>
+
+                <Panel class="DLTKBody">
+                    <Panel class="DLTKSidebar">
+                        <Button id="DLTKTabRunes"
+                                class="DLTKTabButton DLTKTabSelected"
+                                onactivate="$.DLTK.UI.selectTab('runes');">
+                            <Label text="Runes" />
+                        </Button>
+
+                        <Button id="DLTKTabParty"
+                                class="DLTKTabButton"
+                                onactivate="$.DLTK.UI.selectTab('party');">
+                            <Label text="Party" />
+                        </Button>
+
+                        <Button id="DLTKTabAbout"
+                                class="DLTKTabButton"
+                                onactivate="$.DLTK.UI.selectTab('about');">
+                            <Label text="About" />
+                        </Button>
+
+                        <Panel class="DLTKFutureTabs">
+                            <Label class="DLTKSmallMuted" text="More modules later" />
+                        </Panel>
+                    </Panel>
+
+                    <Panel class="DLTKContent">
+                        <Panel id="DLTKPageRunes" class="DLTKPage">
+                            <Label class="DLTKPageTitle" text="Rune Warning" />
+                            <Label class="DLTKDescription"
+                                   text="Audio warning before each Bridge Buff / rune spawn." />
+
+                            <Panel class="DLTKCard">
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Rune warnings" />
+                                        <Label class="DLTKSettingHint" text="Enable or disable this module." />
+                                    </Panel>
+                                    <Button id="DLTKRuneEnabledButton"
+                                            class="DLTKValueButton"
+                                            onactivate="$.DLTK.UI.toggleRunes();">
+                                        <Label id="DLTKRuneEnabledValue" text="ON" />
+                                    </Button>
+                                </Panel>
+
+                                <Panel class="DLTKDivider" />
+
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Warning lead" />
+                                        <Label class="DLTKSettingHint" text="How early the sound should play." />
+                                    </Panel>
+
+                                    <Panel class="DLTKStepper">
+                                        <Button class="DLTKStepButton"
+                                                onactivate="$.DLTK.UI.adjustRuneLead(-5);">
+                                            <Label text="-" />
+                                        </Button>
+                                        <Label id="DLTKRuneLeadValue"
+                                               class="DLTKStepValue"
+                                               text="30 sec" />
+                                        <Button class="DLTKStepButton"
+                                                onactivate="$.DLTK.UI.adjustRuneLead(5);">
+                                            <Label text="+" />
+                                        </Button>
+                                    </Panel>
+                                </Panel>
+
+                                <Panel class="DLTKDivider" />
+
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Warning sound" />
+                                        <Label class="DLTKSettingHint"
+                                               text="Uses the bundled custom Rune warning audio." />
+                                    </Panel>
+
+                                    <Panel class="DLTKSoundControls">
+                                        <Panel class="DLTKSoundSelected">
+                                            <Label id="DLTKRuneSoundValue"
+                                                   class="DLTKSoundName"
+                                                   text="Custom sound" />
+                                            <Label id="DLTKRuneSoundEvent"
+                                                   class="DLTKSoundEvent"
+                                                   text="DLTK.Rune.Warning" />
+                                        </Panel>
+
+                                        <Button class="DLTKActionButton"
+                                                onactivate="$.DLTK.UI.testRuneSound();">
+                                            <Label text="Test custom" />
+                                        </Button>
+                                        <Button class="DLTKActionButton"
+                                                onactivate="$.DLTK.UI.testKnownGoodSound();">
+                                            <Label text="Test known-good" />
+                                        </Button>
+                                    </Panel>
+                                </Panel>
+                            </Panel>
+
+                            <Panel class="DLTKStatusCard">
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Game time" />
+                                    <Label id="DLTKGameTimeValue"
+                                           class="DLTKStatusValue"
+                                           text="--:--" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Next rune" />
+                                    <Label id="DLTKNextRuneValue"
+                                           class="DLTKStatusValue"
+                                           text="05:00" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Next warning" />
+                                    <Label id="DLTKNextWarningValue"
+                                           class="DLTKStatusValue"
+                                           text="04:30" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Module status" />
+                                    <Label id="DLTKRuneStatusValue"
+                                           class="DLTKStatusValue"
+                                           text="Waiting for HUD clock" />
+                                </Panel>
+                            </Panel>
+                        </Panel>
+
+                        <Panel id="DLTKPageParty" class="DLTKPage DLTKHidden">
+                            <Label class="DLTKPageTitle" text="Party" />
+                            <Label class="DLTKDescription"
+                                   text="Keep Lane Preference set to With Party while you are grouped." />
+
+                            <Panel class="DLTKCard">
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Keep party together" />
+                                        <Label class="DLTKSettingHint" text="Automatically re-apply the native game setting." />
+                                    </Panel>
+                                    <Button id="DLTKPartyEnabledButton"
+                                            class="DLTKValueButton"
+                                            onactivate="$.DLTK.UI.toggleParty();">
+                                        <Label id="DLTKPartyEnabledValue" text="ON" />
+                                    </Button>
+                                </Panel>
+
+                                <Panel class="DLTKDivider" />
+
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Native selector found" />
+                                        <Label class="DLTKSettingHint" text="LanePreferenceSelector from the native party panel." />
+                                    </Panel>
+                                    <Label id="DLTKPartySelectorValue"
+                                           class="DLTKStatusValue"
+                                           text="No" />
+                                </Panel>
+
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Current preference" />
+                                    </Panel>
+                                    <Label id="DLTKPartyCurrentValue"
+                                           class="DLTKStatusValue"
+                                           text="Unknown" />
+                                </Panel>
+
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Desired preference" />
+                                    </Panel>
+                                    <Label id="DLTKPartyDesiredValue"
+                                           class="DLTKStatusValue"
+                                           text="With Party" />
+                                </Panel>
+
+                                <Panel class="DLTKDivider" />
+
+                                <Panel class="DLTKSettingRow">
+                                    <Panel class="DLTKSettingText">
+                                        <Label class="DLTKSettingName" text="Status" />
+                                        <Label id="DLTKPartyStatusValue"
+                                               class="DLTKSettingHint"
+                                               text="Waiting for party state" />
+                                    </Panel>
+                                    <Button class="DLTKActionButton"
+                                            onactivate="$.DLTK.UI.applyPartyNow();">
+                                        <Label text="Apply now" />
+                                    </Button>
+                                </Panel>
+                            </Panel>
+
+                            <Panel class="DLTKStatusCard">
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Party detected" />
+                                    <Label id="DLTKPartyDetectedValue"
+                                           class="DLTKStatusValue"
+                                           text="No" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Last party_updated" />
+                                    <Label id="DLTKPartyLastEventValue"
+                                           class="DLTKStatusValue"
+                                           text="Never" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Last apply attempt" />
+                                    <Label id="DLTKPartyLastAttemptValue"
+                                           class="DLTKStatusValue"
+                                           text="Never" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Last result" />
+                                    <Label id="DLTKPartyResultValue"
+                                           class="DLTKStatusValue"
+                                           text="Unknown" />
+                                </Panel>
+                                <Panel class="DLTKStatusRow">
+                                    <Label class="DLTKStatusLabel" text="Verification" />
+                                    <Label id="DLTKPartyVerificationValue"
+                                           class="DLTKStatusValue"
+                                           text="Unknown" />
+                                </Panel>
+                            </Panel>
+                        </Panel>
+
+                        <Panel id="DLTKPageAbout" class="DLTKPage DLTKHidden">
+                            <Label class="DLTKPageTitle" text="Deadlock Personal Toolkit" />
+                            <Label class="DLTKDescription"
+                                   text="v0.1 - modular personal HUD utilities." />
+
+                            <Panel class="DLTKCard DLTKAboutCard">
+                                <Label class="DLTKSettingName" text="Architecture" />
+                                <Label class="DLTKParagraph"
+                                       text="Core timer reading, feature modules and settings UI are separated. Future features should be added as new modules and tabs." />
+
+                                <Label class="DLTKSettingName" text="Current module" />
+                                <Label class="DLTKParagraph"
+                                       text="Runes: warning before 05:00 and every 5 minutes after." />
+
+                                <Label class="DLTKSettingName" text="Planned expansion" />
+                                <Label class="DLTKParagraph"
+                                       text="Rejuvenator, Urn, jungle timers, profiles and persistent presets can be added later." />
+                            </Panel>
+                        </Panel>
+                    </Panel>
+                </Panel>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>
