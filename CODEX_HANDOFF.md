@@ -4,39 +4,74 @@
 
 Deadlock Personal Toolkit is a client-side Source 2 / Panorama project. Keep the code modular: the core reads HUD state, feature modules own behavior, and the settings script owns the in-game panel.
 
-## Current source layout
+## Runtime-verified state
 
-- src/panorama/layout/base_hud.xml — minimal HUD wrapper and DLTK overlay.
-- src/panorama/styles/dltoolkit.css — toolkit styling.
-- src/panorama/scripts/dltoolkit_config.js — runtime defaults and sound API.
-- src/panorama/scripts/dltoolkit_core.js — HUD clock discovery and module polling.
-- src/panorama/scripts/modules/runes.js — Rune / Bridge Buff timing and warning behavior.
-- src/panorama/scripts/modules/party.js — native lane preference helper.
-- src/panorama/scripts/ui/settings.js — tabs, status display, and UI actions.
-- src/sounds/dltk/rune_warning.wav — user-created custom audio source.
-- src/soundevents and src/resourcemanifests — Source 2 sound registration source.
+As of 30 September 2026, the Rune / Bridge Buff feature is confirmed working in game after the major Deadlock update:
 
-## Verified and open runtime status
+- DLTK UI loads in game;
+- Rune timing follows the in-game match clock;
+- the custom Rune warning sound is audible;
+- automatic warnings trigger on schedule.
 
-- The known-good UI sound path has been confirmed to play in Deadlock.
-- DLTK.Rune.Warning currently produces no audible sound at runtime. The WAV, soundevent, and addon manifest compile and are included in the debug build, but custom event registration/playback remains open.
-- The Runes tab has temporary Test custom and Test known-good buttons. Each logs the event passed to PlaySoundEffect when pressed.
-- Party lane preference logic can attempt to select “With Party”; reliable live confirmation is still pending.
-- Settings are in-memory and reset when Panorama reloads.
+Default schedule:
 
-Keep the custom sound issue visible in documentation until the event is audibly confirmed in-game. Do not describe Party automation as fully verified without a live test.
+- first spawn: 05:00;
+- repeat interval: 05:00;
+- warning lead: 00:30.
 
-## Build and validation
+Party / “With Party” work remains experimental and must not be treated as stable without a fresh runtime test.
 
-The build uses a compatible Deadlock Reduced CSDK 12 ResourceCompiler and CSDKCfgVPK. See the parameterized example in README.md. The build script writes staging/compiler outputs outside the tracked source tree and packs only compiled resources. Generated VPKs, backups, and compiler output are intentionally ignored by Git.
+## Source-of-truth warning
 
-Useful source checks:
+GitHub `main` still contains the original 28 September source snapshot plus documentation updates. The latest runtime-tested post-update working tree was developed locally afterward and has not yet been fully synchronized to GitHub.
 
-    python .\tools\validate_schedule.py
-    .\tools\inspect_tree.ps1
+Therefore:
 
-The installer refuses to run while Deadlock is active, backs up the existing VPK slot, and verifies the installed hash. Close Deadlock before running it.
+- do not assume current `main` build scripts exactly reproduce the latest working VPK;
+- do not restore the old standalone `src/soundevents/*` / `src/resourcemanifests/*` architecture into new work just because those files still exist on `main`;
+- before making further source changes, sync the current local working tree first and audit the resulting Git diff.
+
+Known post-update local work included current-stock resource patching/build logic and later UI/sound compatibility work that is not represented by the single original source commit.
+
+## Runtime safety
+
+Assume Deadlock is closed unless explicitly stated otherwise.
+
+If Deadlock is running:
+
+- never replace the installed VPK;
+- never kill/restart/stop the game;
+- source edits, staging and static validation are allowed.
+
+## Build/install principles
+
+- Build against current installed Deadlock resources rather than permanently committing decompiled Valve resources.
+- Keep generated Valve-derived files under ignored build/generated-style paths.
+- Keep VPKs, compiler output, backups and staged generated resources out of Git.
+- Validate source, compiled resources, VPK contents and hashes before install.
+- Close Deadlock before replacing the installed VPK.
+
+Useful checks from the current repository snapshot:
+
+```powershell
+python .\tools\validate_schedule.py
+.\tools\inspect_tree.ps1
+```
+
+## Installation / addon mounting
+
+The VPK normally lives under:
+
+```text
+<Deadlock>\game\citadel\addons\pak99_dir.vpk
+```
+
+The game must actually mount `citadel/addons`. Deadlock updates / Steam Verify can restore `gameinfo.gi` and remove custom addon search paths. Never replace the whole current `gameinfo.gi` with an old copy.
+
+For sharing with another player, prefer a current Deadlock mod manager / loader rather than asking them to hand-edit `gameinfo.gi`.
 
 ## Ownership notes
 
-Some HUD wrapper and timer patterns are adapted from Predi-i/Deadlock-UI-Mods under Apache-2.0. The affected files carry notices; see THIRD_PARTY_NOTICES.md and LICENSES/Apache-2.0.txt. The project does not include a full decompiled Valve HUD resource or compiled game files. The Rune WAV is the user's custom asset.
+Some HUD wrapper and timer patterns were adapted from Predi-i/Deadlock-UI-Mods under Apache-2.0. See `THIRD_PARTY_NOTICES.md` and `LICENSES/Apache-2.0.txt`.
+
+The Rune WAV is the user's custom asset. Do not commit Valve binaries, CSDK binaries, full copied/decompiled game resources, or generated compiled stock resources.
