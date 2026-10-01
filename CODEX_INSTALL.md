@@ -1,6 +1,6 @@
 # Codex install guide
 
-This file is intended for a local Codex agent installing Deadlock Personal Toolkit (DLTK) on another Windows PC.
+This file is the installation runbook for a local Codex agent installing Deadlock Personal Toolkit (DLTK) on another Windows PC.
 
 Repository:
 
@@ -8,173 +8,249 @@ Repository:
 https://github.com/psiu7217/deadlock-MOD
 ```
 
-## Ready-to-use prompt for Codex
+## One-line user request
 
-Copy this entire prompt into Codex:
+The intended installation request is only:
 
 ```text
-Install Deadlock Personal Toolkit (DLTK) from:
-
+Install this Deadlock mod for me:
 https://github.com/psiu7217/deadlock-MOD
+```
 
-on this Windows PC for my local Deadlock installation.
+That single request authorizes the normal installation steps in this runbook. **Do not ask the user for additional confirmation for the documented download, backup, five-line mount patch, VPK copy, or verification steps.**
 
-Work autonomously, but follow the repository documentation exactly.
-Read these files first:
+If all checks pass, finish with a concise message equivalent to:
 
-- README.md
-- CODEX_HANDOFF.md
-- CODEX_INSTALL.md
+> DLTK v1.0.0 installed and verified. You can launch Deadlock now.
 
-IMPORTANT SAFETY RULES
+Do not launch Deadlock yourself.
 
-1. Detect whether Deadlock is currently running.
-2. If Deadlock is running:
-   - do NOT kill it;
-   - do NOT restart it;
-   - do NOT replace any VPK;
-   - do NOT edit gameinfo.gi;
-   - stop and ask me to close the game manually.
-3. Never replace the whole current gameinfo.gi with an old copy.
-4. Before changing any existing game file, create a timestamped backup.
-5. Preserve current Deadlock build-specific entries and comments.
-6. Do not install unrelated software or modify other mods.
-7. Do not launch Deadlock automatically at the end. I will test it manually.
+## Stable release to install
 
-GOAL
-
-Install the current stable Rune / Bridge Buff reminder build so that:
-
-- DLTK appears in the Deadlock UI;
-- Rune timing uses the in-game clock;
-- the bundled warning sound works;
-- automatic warnings fire 30 seconds before the 05:00, 10:00, 15:00, ... Bridge Buff cycle.
-
-STEP 1 — LOCATE DEADLOCK
-
-Find the actual Deadlock installation instead of assuming C:\Steam.
-
-Check Steam library configuration / common install locations and identify:
-
-<DeadlockRoot>\game\citadel\
-
-Confirm the current game build and the current gameinfo.gi path.
-
-STEP 2 — OBTAIN THE MOD
-
-Prefer the stable prebuilt release asset before considering any local build:
+Use the verified prebuilt release. Do **not** rebuild it for a normal installation.
 
 - Release: `https://github.com/psiu7217/deadlock-MOD/releases/tag/v1.0.0`
-- Exact asset: `https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk`
+- Asset: `https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk`
+- Filename: `DLTK_Runes_v1.0.0.vpk`
 - Expected SHA-256: `9990F935E835E5D72762C7E5D2168DABC720C0710FE0859E95F589393477825D`
 - Expected size: `157789` bytes
 - Source commit: `b635a59a757715e45fa6fc779fbf65b011f23c0a`
 
-If this exact release asset is available, download it, verify both its SHA-256 and size, and use it without rebuilding. If either check fails, stop and report the mismatch rather than installing it. Only if this release asset is unavailable should you consider another compatible prebuilt release or a source build.
+This exact VPK was runtime-tested successfully and the installation procedure below was also successfully tested on a second Windows PC.
 
-This stable release covers the Rune / Bridge Buff reminder and DLTK UI. Party / “With Party” is experimental and is not part of the stable release.
+## Hard stop conditions
 
-If no prebuilt release exists:
-- clone or update this repository locally;
-- run repository validation;
-- build from source ONLY if a compatible local Deadlock Reduced CSDK / ResourceCompiler / VPK packer is available;
-- use tools/build_vpk.ps1 and the current installed Deadlock resources as documented;
-- do not download random third-party binaries merely to make the build work.
+Stop instead of improvising only if:
 
-If there is no prebuilt VPK and no compatible local build toolchain, stop and tell me exactly what is missing rather than improvising.
+1. Deadlock is running. Never kill/restart it; tell the user to close it and then continue/rerun.
+2. The release asset hash or size does not match the values above.
+3. `gameinfo.gi` has a materially different `SearchPaths` structure and the verified minimal patch cannot be applied unambiguously.
+4. A mod manager is actively managing a different addon layout and direct edits would conflict with it.
+5. The target `pak99_dir.vpk` is occupied by an unrelated mod and replacing it would disable that mod.
+6. Required filesystem permissions are unavailable.
 
-STEP 3 — VALIDATE BEFORE INSTALL
+Do not ask for confirmation merely because a backup or the verified five-line patch is required.
 
-For a source build, run:
+---
 
-python .\tools\validate_schedule.py
-.\tools\inspect_tree.ps1
+# Installation procedure
 
-Confirm the build output parses correctly and contains the expected DLTK Panorama resources, Rune logic, custom sound resource, and patched stock soundevent resource.
+## 1. Locate Deadlock
 
-Record the SHA-256 of the VPK that will be installed.
+Find the actual Steam library instead of assuming `C:\Steam`.
 
-STEP 4 — BACK UP EXISTING MOD SLOT
+Locate:
 
-Target addon directory is normally:
-
-<DeadlockRoot>\game\citadel\addons\
-
-If a VPK already occupies the target slot, back it up with a timestamp before replacing it.
-
-Do not delete an existing mod without preserving it.
-
-STEP 5 — ENSURE ADDON MOUNTING
-
-Check whether the CURRENT Deadlock configuration already mounts `citadel/addons`.
-
-If a current Deadlock Mod Manager / compatible mod loader is already installed and managing addon search paths, prefer using its current mechanism rather than fighting it.
-
-If manual mounting is required:
-- inspect the CURRENT gameinfo.gi first;
-- inspect current Deadlock Mod Manager source/documentation if needed to understand the current build's expected search-path behavior;
-- make the smallest possible change to the CURRENT file;
-- preserve current Game_UILanguage, Game_LowViolence, UserSettingsPathID, LegacyUserSettingsPathID, comments, and all other current-build settings;
-- create a timestamped backup first;
-- never paste an old full SearchPaths block from another Deadlock build;
-- never replace the whole file.
-
-After any manual edit, re-read and validate gameinfo.gi structurally before proceeding.
-
-If the correct mount method is uncertain, stop and report the uncertainty instead of guessing.
-
-STEP 6 — INSTALL VPK
-
-Install the validated VPK under the active Deadlock addon path.
-
-Use the repository installer when appropriate:
-
-.\tools\install_built_vpk.ps1 -GameRoot "<DeadlockRoot>" -BuiltVpk "<path-to-built-vpk>"
-
-The installer should refuse to replace the file while Deadlock is running, create a backup of the existing slot, and verify the copied hash.
-
-If installing a prebuilt release VPK manually, provide the same protections yourself:
-- game closed;
-- backup existing slot;
-- copy atomically where practical;
-- verify installed SHA-256 equals source SHA-256.
-
-STEP 7 — FINAL AUDIT
-
-Do NOT launch Deadlock automatically.
-
-Report:
-
-1. Deadlock root detected
-2. Current Deadlock build
-3. Repository/release version or commit used
-4. Whether a prebuilt VPK or local build was used
-5. VPK SHA-256
-6. Installed VPK path
-7. Backup path of any replaced VPK
-8. Whether `citadel/addons` was already mounted
-9. Whether gameinfo.gi was changed
-10. If changed: backup path and exact minimal diff
-11. Validation results
-12. Any conflicts with existing mods
-
-Then give me these manual test steps:
-
-- launch Deadlock normally;
-- enter a match / hero testing environment;
-- press Esc and confirm the DLTK entry appears;
-- open DLTK and confirm Rune reminder is enabled;
-- verify Game time / Next Bridge Buff / Warning in update;
-- verify the custom sound fires on schedule.
-
-Do not modify Party functionality or other experimental modules during installation.
-Do not commit or push anything to the repository.
+```text
+<DeadlockRoot>\game\citadel\gameinfo.gi
 ```
+
+and the addon directory:
+
+```text
+<DeadlockRoot>\game\citadel\addons\
+```
+
+Detect whether Deadlock is running before changing files.
+
+If it is running, stop without changing anything and tell the user to close the game. Never terminate it automatically.
+
+## 2. Download and verify the stable VPK
+
+Download exactly:
+
+```text
+https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk
+```
+
+Do not disable TLS/certificate verification. If one local download method has a certificate/trust problem, use another normal trusted path such as the browser/web download rather than bypassing certificate checks.
+
+Verify before installation:
+
+```text
+Size:    157789 bytes
+SHA-256: 9990F935E835E5D72762C7E5D2168DABC720C0710FE0859E95F589393477825D
+```
+
+If either value differs, do not install.
+
+## 3. Inspect current addon mounting
+
+Read the **current local** `gameinfo.gi`. Never replace it with a repository copy, old backup from another PC, or a hard-coded full template.
+
+Preserve all current-build content, including when present:
+
+- `Game_UILanguage` / `Game_Language`
+- `Game_LowViolence`
+- `UserSettingsPathID`
+- `LegacyUserSettingsPathID`
+- comments
+- encoding and line endings
+- any unrelated current-build settings
+
+If `citadel/addons` is already mounted correctly with explicit `Mod`/`Write` roots, do not duplicate the entries.
+
+### Verified manual mount patch
+
+For the compatible stock layout where `SearchPaths` already contains the existing entries:
+
+```text
+Game    citadel
+Game    core
+```
+
+apply **exactly five added lines**, preserving the existing two `Game` entries and all other content:
+
+```diff
++ Game    citadel/addons
++ Mod     citadel
++ Write   citadel
+  Game    citadel
++ Mod     core
++ Write   core
+  Game    core
+```
+
+Spacing/tabs may follow the file's existing style. Semantically the resulting order must be:
+
+```text
+Game    citadel/addons
+Mod     citadel
+Write   citadel
+Game    citadel
+Mod     core
+Write   core
+Game    core
+```
+
+This ordering matches the current Deadlock Mod Manager mount logic used as compatibility evidence and has been successfully tested with DLTK on two PCs.
+
+**Do not use the old one-line-only patch:**
+
+```text
+Game citadel/addons
+```
+
+by itself. A previous test of that simplified patch caused Deadlock to fail with `Unable to read default keybinding configuration (user_keys_default)`.
+
+## 4. Back up and patch `gameinfo.gi` safely
+
+Before modifying the live file, create a timestamped copy, for example:
+
+```text
+gameinfo.gi.codex-backup-YYYYMMDD-HHMMSS
+```
+
+Record its SHA-256.
+
+Use a simple, robust file-update flow:
+
+1. Copy the original to the timestamped backup.
+2. Prepare the modified content in a temporary file next to `gameinfo.gi`.
+3. Preserve the source file's encoding and CRLF/LF style.
+4. Validate the temporary file before replacing the live file.
+5. Confirm the intended diff is only the verified five added mount lines when starting from the compatible stock layout.
+6. Replace/move the validated temp file over the live file.
+7. Re-read the live file and validate it again.
+
+Do **not** use a fragile `File.Replace(...)` backup overload if the runtime/platform rejects it. The explicit backup copy already provides recovery protection.
+
+Validation after the edit must confirm:
+
+- braces / `SearchPaths` structure are intact;
+- `citadel/addons` appears exactly once for this layout;
+- `Mod citadel`, `Write citadel`, `Mod core`, `Write core` are present in the verified order;
+- original language/low-violence/settings-path entries are unchanged;
+- no unrelated lines were removed or rewritten.
+
+If the current file does not have compatible anchors or would require broader reconstruction, stop rather than guessing.
+
+## 5. Install the VPK
+
+Target path for this standalone installation:
+
+```text
+<DeadlockRoot>\game\citadel\addons\pak99_dir.vpk
+```
+
+Create `addons` if it does not exist.
+
+If `pak99_dir.vpk` does not exist, install normally.
+
+If it already exists:
+
+- if it is clearly a previous DLTK installation, back it up with a timestamp and replace it;
+- if it is an unrelated mod, stop instead of silently disabling that mod.
+
+Copy the verified release VPK into the target path. Use a temp file + rename/move on the same filesystem when practical.
+
+After installation verify the installed file again:
+
+```text
+Size:    157789 bytes
+SHA-256: 9990F935E835E5D72762C7E5D2168DABC720C0710FE0859E95F589393477825D
+```
+
+## 6. Final audit
+
+Do not launch Deadlock automatically.
+
+Verify:
+
+- Deadlock was closed during all mutations;
+- installed VPK hash and size match the stable release;
+- `gameinfo.gi` passed structural checks;
+- if patched from the compatible stock layout, the final comparison shows exactly the documented five added mount lines;
+- the timestamped `gameinfo.gi` backup still exists and hashes correctly;
+- no unrelated mod or game file was changed.
+
+A successful final response should be short, for example:
+
+```text
+DLTK v1.0.0 installed successfully.
+VPK hash verified.
+Deadlock addon mount configured and validated.
+Backup of gameinfo.gi created.
+
+You can launch Deadlock now.
+```
+
+Optionally include the installed path and backup path, but do not require another approval or ask the user to perform an intermediate verification before declaring installation complete.
+
+The user may then manually verify in game:
+
+- `Esc` → `DLTK` exists;
+- DLTK window opens;
+- `Game time`, `Next Bridge Buff`, and `Warning in` update;
+- custom warning sound fires 30 seconds before `05:00`, `10:00`, `15:00`, etc.
+
+---
 
 ## Notes for Codex
 
+- The stable v1.0.0 VPK is preferred over a source build.
 - The source repository intentionally does not track generated VPKs or compiled Source 2 resources.
-- Current source patches stock Panorama and stock `soundevents/ui.vsndevts_c` during build rather than storing full generated Valve resources.
+- Current source patches stock Panorama and stock `soundevents/ui.vsndevts_c` during build.
 - `src/sounds/dltk/rune_warning.wav` is the canonical source audio asset.
-- Party / “With Party” functionality is experimental and is not part of the installation acceptance criteria.
-- Deadlock updates and Steam Verify can restore `gameinfo.gi` and remove custom addon search paths, so always inspect the current build before changing mounting configuration.
+- Party / “With Party” is experimental and must not be modified during installation.
+- Deadlock updates and Steam Verify may restore `gameinfo.gi` and remove custom addon mount paths; rerun this installation procedure after such an update if DLTK stops loading.
