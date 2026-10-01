@@ -23,6 +23,16 @@ The current source dynamically adds a DLTK launcher to the native Escape menu. V
 
 The Party / “With Party” helper is experimental and should not be treated as part of the stable Rune feature.
 
+## Stable release
+
+The first stable release is [DLTK Runes v1.0.0](https://github.com/psiu7217/deadlock-MOD/releases/tag/v1.0.0). Download the prebuilt [DLTK_Runes_v1.0.0.vpk](https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk) instead of rebuilding when installing this release.
+
+- SHA-256: `9990F935E835E5D72762C7E5D2168DABC720C0710FE0859E95F589393477825D`
+- Size: `157789` bytes
+- Source commit: [`b635a59a757715e45fa6fc779fbf65b011f23c0a`](https://github.com/psiu7217/deadlock-MOD/commit/b635a59a757715e45fa6fc779fbf65b011f23c0a)
+
+This VPK passed a manual runtime smoke test. Party / “With Party” remains experimental and is not included in the stable release acceptance criteria.
+
 ## Installation
 
 ### Install with Codex

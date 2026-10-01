@@ -62,11 +62,17 @@ Confirm the current game build and the current gameinfo.gi path.
 
 STEP 2 — OBTAIN THE MOD
 
-Prefer a prebuilt release VPK if the repository has a current GitHub Release containing the DLTK VPK.
+Prefer the stable prebuilt release asset before considering any local build:
 
-If a compatible prebuilt VPK is available:
-- download/use that VPK;
-- do not rebuild unnecessarily.
+- Release: `https://github.com/psiu7217/deadlock-MOD/releases/tag/v1.0.0`
+- Exact asset: `https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk`
+- Expected SHA-256: `9990F935E835E5D72762C7E5D2168DABC720C0710FE0859E95F589393477825D`
+- Expected size: `157789` bytes
+- Source commit: `b635a59a757715e45fa6fc779fbf65b011f23c0a`
+
+If this exact release asset is available, download it, verify both its SHA-256 and size, and use it without rebuilding. If either check fails, stop and report the mismatch rather than installing it. Only if this release asset is unavailable should you consider another compatible prebuilt release or a source build.
+
+This stable release covers the Rune / Bridge Buff reminder and DLTK UI. Party / “With Party” is experimental and is not part of the stable release.
 
 If no prebuilt release exists:
 - clone or update this repository locally;
