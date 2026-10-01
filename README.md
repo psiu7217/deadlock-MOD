@@ -25,6 +25,19 @@ The Party / “With Party” helper is experimental and should not be treated as
 
 ## Installation
 
+### Install with Codex
+
+If Codex is available on the target PC, the user can give it only this task:
+
+```text
+Install this Deadlock mod for me:
+https://github.com/psiu7217/deadlock-MOD
+```
+
+Repository-level instructions are in `AGENTS.md`, and the complete installation runbook / ready-to-use prompt is in `CODEX_INSTALL.md`.
+
+Codex should detect the local Deadlock installation, keep the game closed while changing files, back up anything it replaces, prefer a current prebuilt release VPK when available, and report the final installation without launching the game automatically.
+
 ### Recommended for another player
 
 Use a current Deadlock mod loader / Deadlock Mod Manager to mount the mod VPK. This is the safest option for sharing because Deadlock updates can replace `gameinfo.gi` and remove custom addon search paths.
@@ -100,6 +113,8 @@ Close Deadlock before installing or replacing a VPK. The installer refuses to re
 - `tools` — build, installation, sound import and validation scripts.
 - `config` — defaults/reference configuration.
 - `CODEX_HANDOFF.md` — development notes.
+- `AGENTS.md` — repository instructions for Codex agents.
+- `CODEX_INSTALL.md` — Codex installation runbook and ready-to-use prompt.
 - `THIRD_PARTY_NOTICES.md` and `LICENSES/` — attribution/license material.
 
 ## Licensing and affiliation
