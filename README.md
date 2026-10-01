@@ -4,7 +4,7 @@ Deadlock Personal Toolkit (DLTK) is a client-side Source 2 / Panorama toolkit fo
 
 ## Current runtime status
 
-As of 30 September 2026, the Rune / Bridge Buff reminder is runtime-verified in the current Deadlock build used for testing:
+As of 30 September / 1 October 2026, the Rune / Bridge Buff reminder is runtime-verified after the major Deadlock update:
 
 - the DLTK UI loads in game;
 - the Rune timer follows the in-game match clock;
@@ -19,74 +19,48 @@ The current default schedule is:
 
 The build injects `DLTK.Rune.Warning` into a generated copy of the current game's stock `soundevents/ui.vsndevts_c`, preserving original events. The current source uses event volume `22.0`; the sound is audible in game.
 
-The current source dynamically adds a DLTK launcher to the native Escape menu. Verify its appearance in game after confirming that the current game configuration mounts `citadel/addons`.
-
 The Party / “With Party” helper is experimental and should not be treated as part of the stable Rune feature.
 
 ## Stable release
 
-The first stable release is [DLTK Runes v1.0.0](https://github.com/psiu7217/deadlock-MOD/releases/tag/v1.0.0). Download the prebuilt [DLTK_Runes_v1.0.0.vpk](https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk) instead of rebuilding when installing this release.
+The first stable release is [DLTK Runes v1.0.0](https://github.com/psiu7217/deadlock-MOD/releases/tag/v1.0.0). Use the prebuilt [DLTK_Runes_v1.0.0.vpk](https://github.com/psiu7217/deadlock-MOD/releases/download/v1.0.0/DLTK_Runes_v1.0.0.vpk) instead of rebuilding for a normal installation.
 
 - SHA-256: `9990F935E835E5D72762C7E5D2168DABC720C0710FE0859E95F589393477825D`
 - Size: `157789` bytes
 - Source commit: [`b635a59a757715e45fa6fc779fbf65b011f23c0a`](https://github.com/psiu7217/deadlock-MOD/commit/b635a59a757715e45fa6fc779fbf65b011f23c0a)
 
-This VPK passed a manual runtime smoke test. Party / “With Party” remains experimental and is not included in the stable release acceptance criteria.
+This VPK passed manual runtime testing. The one-shot Codex installation flow, including the verified five-line addon-mount patch, was also successfully tested on a second Windows PC.
 
 ## Installation
 
-### Install with Codex
+### One-prompt install with Codex
 
-If Codex is available on the target PC, the user can give it only this task:
+If Codex is available on the target PC, give it only this task:
 
 ```text
 Install this Deadlock mod for me:
 https://github.com/psiu7217/deadlock-MOD
 ```
 
-Repository-level instructions are in `AGENTS.md`, and the complete installation runbook / ready-to-use prompt is in `CODEX_INSTALL.md`.
+That is the intended complete installation prompt.
 
-Codex should detect the local Deadlock installation, keep the game closed while changing files, back up anything it replaces, prefer a current prebuilt release VPK when available, and report the final installation without launching the game automatically.
+Repository-level instructions are in `AGENTS.md`, and the complete tested installation runbook is in `CODEX_INSTALL.md`.
 
-### Recommended for another player
+For a compatible installation with Deadlock already closed, Codex should complete the normal install without asking for intermediate confirmations: locate Deadlock, download and verify the stable VPK, back up `gameinfo.gi`, apply the documented five-line addon-mount patch when needed, install the VPK, verify the final state, and finish with **“You can launch Deadlock now.”**
 
-Use a current Deadlock mod loader / Deadlock Mod Manager to mount the mod VPK. This is the safest option for sharing because Deadlock updates can replace `gameinfo.gi` and remove custom addon search paths.
+Codex must not terminate or launch Deadlock automatically. If the game is already running, the user must close it before file changes can proceed.
 
-The built mod VPK belongs under the Deadlock addon path, typically:
+### Manual / mod-manager installation
+
+A current Deadlock mod manager / loader may also manage addon mounting. For a standalone manual installation, the VPK normally belongs at:
 
 ```text
 <Deadlock install directory>\game\citadel\addons\pak99_dir.vpk
 ```
 
-The exact VPK slot/name may be changed by a mod manager when it orders installed mods. That is normal.
+The current game must mount `citadel/addons` correctly. Do not add only a lone `Game citadel/addons` line and do not replace the whole `gameinfo.gi` with an old template. The tested manual mount layout and backup procedure are documented in `CODEX_INSTALL.md`.
 
-### Manual installation
-
-Manual installation also works when the game is already configured to mount `citadel/addons` with the correct search-path priority.
-
-1. Close Deadlock completely.
-2. Back up the current mod VPK if one already exists.
-3. Copy the built VPK to:
-
-   ```text
-   <Deadlock install directory>\game\citadel\addons\pak99_dir.vpk
-   ```
-
-4. Make sure the current Deadlock configuration actually mounts `citadel/addons` before launching the game.
-5. Launch Deadlock normally and verify the DLTK entry / Rune UI.
-
-Do **not** blindly replace `gameinfo.gi` with an old copy. Deadlock updates change that file. Steam Verify may also restore it to the vanilla version and remove addon search paths. If manual search-path setup is required, modify the current game version only and keep a backup.
-
-## Sharing a built mod
-
-For a friend, the simplest package is:
-
-```text
-DLTK_Runes.zip
-└── pak99_dir.vpk
-```
-
-A compiled VPK is enough for the player; the CSDK and source tree are only required to build or modify the mod.
+Deadlock updates and Steam Verify may restore `gameinfo.gi` and remove addon search paths. If DLTK stops loading after an update, rerun the installation procedure against the current game config.
 
 ## Development
 
@@ -108,7 +82,7 @@ powershell -ExecutionPolicy Bypass -File .\tools\build_vpk.ps1 `
   -OutputVpk ".\dist\pak99_dir.vpk"
 ```
 
-The build uses the current installed Deadlock resources and a compatible Source 2 / Deadlock ResourceCompiler and VPK packer. Build output, generated Valve-derived resources, extracted stock resources, compiled files, backups, and VPK packages must stay outside tracked source and are ignored by Git. The packer is considered complete only after output stabilization and validation.
+The build uses the current installed Deadlock resources and a compatible Source 2 / Deadlock ResourceCompiler and VPK packer. Build output, generated Valve-derived resources, extracted stock resources, compiled files, backups, and VPK packages must stay outside tracked source and are ignored by Git.
 
 Close Deadlock before installing or replacing a VPK. The installer refuses to replace it while the game is running, backs up the current slot, and verifies the installed hash:
 
@@ -124,7 +98,7 @@ Close Deadlock before installing or replacing a VPK. The installer refuses to re
 - `config` — defaults/reference configuration.
 - `CODEX_HANDOFF.md` — development notes.
 - `AGENTS.md` — repository instructions for Codex agents.
-- `CODEX_INSTALL.md` — Codex installation runbook and ready-to-use prompt.
+- `CODEX_INSTALL.md` — tested one-shot Codex installation runbook.
 - `THIRD_PARTY_NOTICES.md` and `LICENSES/` — attribution/license material.
 
 ## Licensing and affiliation
