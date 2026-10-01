@@ -1,8 +1,6 @@
 /*
- * Adapted portions: Rune polling and one-shot alert pattern from
- * Predi-i/Deadlock-UI-Mods, Bridge-Buff-Reminder (Apache-2.0).
- * Modified for configurable DLTK timing, module APIs, and current sound state
- * on 2026-09-28. See THIRD_PARTY_NOTICES.md and LICENSES/Apache-2.0.txt.
+ * Adapted one-shot Rune alert pattern from Predi-i/Deadlock-UI-Mods,
+ * Bridge-Buff-Reminder (Apache-2.0). See THIRD_PARTY_NOTICES.md.
  */
 (function () {
     'use strict';
@@ -10,51 +8,39 @@
     if (!$.DLTK) {
         $.DLTK = {};
     }
-
     if (!$.DLTK.Modules) {
         $.DLTK.Modules = {};
     }
-
     if ($.DLTK.Modules.Runes) {
         return;
     }
 
     var Config = $.DLTK.Config.runes;
-
     var State = {
         lastAlertTarget: -1,
         lastObservedTime: null,
-        lastStatus: 'Waiting for HUD clock'
+        lastStatus: 'Waiting for HUD clock',
+        lastLoggedNextSpawn: null
     };
-
-    function clamp(value, minValue, maxValue) {
-        return Math.max(minValue, Math.min(maxValue, value));
-    }
 
     function getFirstAlertTime() {
         return Config.firstSpawnSeconds - Config.warningLeadSeconds;
     }
 
-    function getCycleForTime(currentTime) {
-        var firstAlert = getFirstAlertTime();
-
-        if (currentTime < firstAlert) {
-            return 0;
-        }
-
-        return Math.floor(
-            (currentTime - firstAlert) / Config.intervalSeconds
-        );
-    }
-
     function getTargetForCycle(cycle) {
         var safeCycle = Math.max(0, cycle);
-
         return {
             cycle: safeCycle,
             spawn: Config.firstSpawnSeconds + (safeCycle * Config.intervalSeconds),
             alert: getFirstAlertTime() + (safeCycle * Config.intervalSeconds)
         };
+    }
+
+    function getCycleForTime(currentTime) {
+        var firstAlert = getFirstAlertTime();
+        return currentTime < firstAlert
+            ? 0
+            : Math.floor((currentTime - firstAlert) / Config.intervalSeconds);
     }
 
     function getUpcoming(currentTime) {
@@ -64,12 +50,46 @@
 
         var cycle = getCycleForTime(currentTime);
         var target = getTargetForCycle(cycle);
-
         if (currentTime >= target.spawn) {
             target = getTargetForCycle(cycle + 1);
         }
-
         return target;
+    }
+
+    function getNextWarning(currentTime) {
+        if (currentTime === null || typeof currentTime !== 'number') {
+            return { alert: getFirstAlertTime(), active: false };
+        }
+
+        var target = getTargetForCycle(getCycleForTime(currentTime));
+        var warningEnd = target.alert + Config.alertWindowSeconds;
+        if (currentTime >= warningEnd) {
+            target = getTargetForCycle(target.cycle + 1);
+            return { alert: target.alert, active: false };
+        }
+
+        return {
+            alert: target.alert,
+            active: currentTime >= target.alert
+        };
+    }
+
+    function formatTime(totalSeconds) {
+        if (totalSeconds === null || typeof totalSeconds !== 'number') {
+            return '--:--';
+        }
+
+        var absolute = Math.abs(Math.floor(totalSeconds));
+        var hours = Math.floor(absolute / 3600);
+        var minutes = Math.floor((absolute % 3600) / 60);
+        var seconds = absolute % 60;
+        function pad(value) {
+            return value < 10 ? ('0' + value) : String(value);
+        }
+
+        return hours > 0
+            ? (hours + ':' + pad(minutes) + ':' + pad(seconds))
+            : (pad(minutes) + ':' + pad(seconds));
     }
 
     function resetAlertState() {
@@ -82,23 +102,23 @@
             : null;
     }
 
-    function dispatchSoundEvent(eventName, shouldLog) {
-        if (!eventName) {
+    function playWarningSound() {
+        var sound = getWarningSound();
+        if (!sound || !sound.event) {
             return false;
         }
 
-        if (shouldLog) {
-            $.Msg('[DLTK][Sound] PlaySoundEffect: ' + eventName + '\n');
-        }
-
-        $.DispatchEvent('PlaySoundEffect', eventName);
+        $.Msg('[DLTK][Sound] PlaySoundEffect: ' + sound.event + '\n');
+        $.DispatchEvent('PlaySoundEffect', sound.event);
         return true;
     }
 
-    function playWarningSound() {
-        var sound = getWarningSound();
-
-        return sound ? dispatchSoundEvent(sound.event, false) : false;
+    function logNextSpawn(currentTime) {
+        var upcoming = getUpcoming(currentTime);
+        if (State.lastLoggedNextSpawn !== upcoming.spawn) {
+            State.lastLoggedNextSpawn = upcoming.spawn;
+            $.Msg('[DLTK][Runes] nextSpawn=' + formatTime(upcoming.spawn) + '\n');
+        }
     }
 
     function onTick(currentTime, ignoredMode) {
@@ -114,14 +134,12 @@
             return;
         }
 
-        if (
-            State.lastObservedTime !== null &&
-            currentTime < (State.lastObservedTime - 2)
-        ) {
+        if (State.lastObservedTime !== null && currentTime < State.lastObservedTime - 2) {
             resetAlertState();
+            State.lastLoggedNextSpawn = null;
         }
-
         State.lastObservedTime = currentTime;
+        logNextSpawn(currentTime);
 
         if (!Config.enabled) {
             State.lastStatus = 'Disabled';
@@ -129,26 +147,18 @@
         }
 
         var firstAlert = getFirstAlertTime();
-
         if (currentTime < firstAlert) {
             State.lastStatus = 'Armed';
             return;
         }
 
-        var cycle = Math.floor(
-            (currentTime - firstAlert) / Config.intervalSeconds
-        );
-
+        var cycle = getCycleForTime(currentTime);
         var target = getTargetForCycle(cycle);
+        var insideWindow = currentTime >= target.alert &&
+            currentTime < target.alert + Config.alertWindowSeconds;
 
-        var insideWindow =
-            currentTime >= target.alert &&
-            currentTime < (target.alert + Config.alertWindowSeconds);
-
-        if (
-            insideWindow &&
-            State.lastAlertTarget !== target.alert
-        ) {
+        if (insideWindow && State.lastAlertTarget !== target.alert) {
+            $.Msg('[DLTK][Runes] warning spawn=' + formatTime(target.spawn) + '\n');
             playWarningSound();
             State.lastAlertTarget = target.alert;
             State.lastStatus = 'Warning played for ' + formatTime(target.spawn);
@@ -159,8 +169,11 @@
     }
 
     function setEnabled(enabled) {
-        Config.enabled = !!enabled;
-
+        var nextEnabled = !!enabled;
+        if (Config.enabled !== nextEnabled) {
+            Config.enabled = nextEnabled;
+            $.Msg('[DLTK][Runes] enabled=' + (nextEnabled ? 'true' : 'false') + '\n');
+        }
         if (!Config.enabled) {
             resetAlertState();
         }
@@ -171,100 +184,20 @@
         return Config.enabled;
     }
 
-    function setWarningLead(seconds) {
-        var parsed = parseInt(seconds, 10);
-
-        if (isNaN(parsed)) {
-            return Config.warningLeadSeconds;
-        }
-
-        Config.warningLeadSeconds = clamp(
-            parsed,
-            Config.minLeadSeconds,
-            Config.maxLeadSeconds
-        );
-
-        resetAlertState();
-
-        return Config.warningLeadSeconds;
-    }
-
-    function adjustWarningLead(delta) {
-        return setWarningLead(
-            Config.warningLeadSeconds + parseInt(delta, 10)
-        );
-    }
-
-    function testSound() {
-        var sound = getWarningSound();
-
-        return sound ? dispatchSoundEvent(sound.event, true) : false;
-    }
-
-    function testKnownGoodSound() {
-        return dispatchSoundEvent('UI.PlayMenu.Activate', true);
-    }
-
-    function formatTime(totalSeconds) {
-        if (totalSeconds === null || typeof totalSeconds !== 'number') {
-            return '--:--';
-        }
-
-        var negative = totalSeconds < 0;
-        var absolute = Math.abs(Math.floor(totalSeconds));
-        var hours = Math.floor(absolute / 3600);
-        var minutes = Math.floor((absolute % 3600) / 60);
-        var seconds = absolute % 60;
-
-        function pad(value) {
-            return value < 10 ? ('0' + value) : String(value);
-        }
-
-        var result = hours > 0
-            ? (hours + ':' + pad(minutes) + ':' + pad(seconds))
-            : (pad(minutes) + ':' + pad(seconds));
-
-        return negative ? ('-' + result) : result;
-    }
-
     $.DLTK.Modules.Runes = {
         onTick: onTick,
-
-        isEnabled: function () {
-            return Config.enabled;
-        },
-
+        isEnabled: function () { return Config.enabled; },
         setEnabled: setEnabled,
         toggleEnabled: toggleEnabled,
-
-        getWarningLead: function () {
-            return Config.warningLeadSeconds;
-        },
-
-        setWarningLead: setWarningLead,
-        adjustWarningLead: adjustWarningLead,
-
-        getSoundLabel: function () {
-            var sound = getWarningSound();
-            return sound ? sound.name : 'Unavailable';
-        },
-
-        getSoundEvent: function () {
-            var sound = getWarningSound();
-            return sound ? sound.event : '';
-        },
-
-        testSound: testSound,
-        testKnownGoodSound: testKnownGoodSound,
         getUpcoming: getUpcoming,
+        getNextWarning: getNextWarning,
         formatTime: formatTime,
-
-        getStatus: function () {
-            return State.lastStatus;
-        },
-
+        getStatus: function () { return State.lastStatus; },
         reset: resetAlertState
     };
+
+    $.Msg('[DLTK][Runes] initialized\n');
+    $.Msg('[DLTK][Runes] enabled=' + (Config.enabled ? 'true' : 'false') + '\n');
 
     if ($.DLTK.Core && $.DLTK.Core.registerModule) {
         $.DLTK.Core.registerModule('Runes', $.DLTK.Modules.Runes);

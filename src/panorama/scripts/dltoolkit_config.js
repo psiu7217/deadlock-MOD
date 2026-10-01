@@ -29,10 +29,7 @@
             firstSpawnSeconds: 300,
             intervalSeconds: 300,
             warningLeadSeconds: 30,
-            alertWindowSeconds: 3,
-            minLeadSeconds: 5,
-            maxLeadSeconds: 90,
-            leadStepSeconds: 5
+            alertWindowSeconds: 3
         },
 
         party: {

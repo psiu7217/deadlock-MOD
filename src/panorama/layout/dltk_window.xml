@@ -1,0 +1,81 @@
+<!--
+    Imported by tools/patch_stock_panorama.ps1 into the current stock
+    hud_escape_menu layout. The source is not compiled as a standalone panel:
+    it shares the stock Escape menu's Panorama context and script scope.
+-->
+<root>
+    <styles>
+        <include src="s2r://panorama/styles/dltoolkit.vcss_c" />
+    </styles>
+
+    <scripts>
+        <include src="s2r://panorama/scripts/dltoolkit_config.vjs_c" />
+        <include src="s2r://panorama/scripts/dltoolkit_core.vjs_c" />
+        <include src="s2r://panorama/scripts/modules/runes.vjs_c" />
+        <include src="s2r://panorama/scripts/ui/settings.vjs_c" />
+        <include src="s2r://panorama/scripts/escape_bootstrap.vjs_c" />
+    </scripts>
+
+    <Panel id="DLToolkitOverlay"
+           class="DLToolkitOverlay"
+           hittest="false"
+           hittestchildren="true">
+        <Panel id="DLToolkitSettings"
+               class="DLTKSettings DLTKHidden"
+               hittest="true"
+               hittestchildren="true">
+            <Panel class="DLTKHeader">
+                <Panel class="DLTKHeaderText">
+                    <Label class="DLTKTitle" text="Deadlock Toolkit" />
+                    <Label class="DLTKSubtitle" text="Rune reminder" />
+                </Panel>
+                <Button class="DLTKCloseButton"
+                        hittest="true"
+                        onactivate="$.DLTK.UI.close();">
+                    <Label text="X" />
+                </Button>
+            </Panel>
+
+            <Panel class="DLTKContent">
+                <Panel id="DLTKPageRunes" class="DLTKPage">
+                    <Label class="DLTKPageTitle" text="Runes" />
+                    <Label class="DLTKDescription"
+                           text="Bridge Buff spawn reminder at fixed five-minute intervals." />
+
+                    <Panel class="DLTKCard">
+                        <Panel class="DLTKSettingRow">
+                            <Panel class="DLTKSettingText">
+                                <Label class="DLTKSettingName" text="Bridge Buff reminder" />
+                                <Label class="DLTKSettingHint" text="Warning sounds 30 seconds before each spawn." />
+                            </Panel>
+                            <Button id="DLTKRuneEnabledButton"
+                                    class="DLTKValueButton"
+                                    onactivate="$.DLTK.UI.toggleRunes();">
+                                <Label id="DLTKRuneEnabledValue" text="ON" />
+                            </Button>
+                        </Panel>
+                    </Panel>
+
+                    <Panel class="DLTKStatusCard">
+                        <Panel class="DLTKStatusRow">
+                            <Label class="DLTKStatusLabel" text="Game time" />
+                            <Label id="DLTKGameTimeValue" class="DLTKStatusValue" text="--:--" />
+                        </Panel>
+                        <Panel class="DLTKStatusRow">
+                            <Label class="DLTKStatusLabel" text="Next Bridge Buff" />
+                            <Label id="DLTKNextRuneValue" class="DLTKStatusValue" text="05:00" />
+                        </Panel>
+                        <Panel class="DLTKStatusRow">
+                            <Label class="DLTKStatusLabel" text="Warning in" />
+                            <Label id="DLTKNextWarningValue" class="DLTKStatusValue" text="04:30" />
+                        </Panel>
+                        <Panel class="DLTKStatusRow">
+                            <Label class="DLTKStatusLabel" text="Status" />
+                            <Label id="DLTKRuneStatusValue" class="DLTKStatusValue" text="Waiting for HUD clock" />
+                        </Panel>
+                    </Panel>
+                </Panel>
+            </Panel>
+        </Panel>
+    </Panel>
+</root>

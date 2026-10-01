@@ -17,17 +17,18 @@ Write-Host "Expected critical files:" -ForegroundColor Cyan
 
 $Required = @(
     "src\panorama\layout\base_hud.xml",
+    "src\panorama\layout\dltk_window.xml",
     "src\panorama\styles\dltoolkit.css",
     "src\panorama\scripts\dltoolkit_config.js",
     "src\panorama\scripts\dltoolkit_core.js",
+    "src\panorama\scripts\dltoolkit_bootstrap.js",
+    "src\panorama\scripts\escape_bootstrap.js",
     "src\panorama\scripts\modules\party.js",
     "src\panorama\scripts\modules\runes.js",
     "src\panorama\scripts\ui\settings.js",
     "src\sounds\dltk\rune_warning.wav",
-    "src\soundevents\dltk.vsndevts",
-    "src\soundevents\soundevents_addon.vsndevts",
-    "src\resourcemanifests\addon_resources.vrman",
-    "tools\set_custom_sound.ps1"
+    "tools\set_custom_sound.ps1",
+    "tools\patch_stock_panorama.ps1"
 )
 
 $Missing = @()

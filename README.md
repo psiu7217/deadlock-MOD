@@ -9,7 +9,7 @@ As of 30 September 2026, the Rune / Bridge Buff reminder is runtime-verified in 
 - the DLTK UI loads in game;
 - the Rune timer follows the in-game match clock;
 - the custom warning sound is audible;
-- the automatic warning fires on the expected schedule.
+- automatic warnings fire on schedule.
 
 The current default schedule is:
 
@@ -17,7 +17,11 @@ The current default schedule is:
 - then every 5 minutes;
 - warning: 30 seconds before spawn (`04:30`, `09:30`, `14:30`, ...).
 
-The Party / “With Party” helper is experimental and should not be treated as part of the stable Rune feature yet.
+The build injects `DLTK.Rune.Warning` into a generated copy of the current game's stock `soundevents/ui.vsndevts_c`, preserving original events. The current source uses event volume `22.0`; the sound is audible in game.
+
+The current source dynamically adds a DLTK launcher to the native Escape menu. Verify its appearance in game after confirming that the current game configuration mounts `citadel/addons`.
+
+The Party / “With Party” helper is experimental and should not be treated as part of the stable Rune feature.
 
 ## Installation
 
@@ -72,15 +76,22 @@ python .\tools\validate_schedule.py
 .\tools\inspect_tree.ps1
 ```
 
-The local build flow uses a compatible Source 2 / Deadlock ResourceCompiler and VPK packer. Build output, generated Valve-derived resources, compiled resources, backups, and VPK packages must stay outside tracked source and are ignored by Git.
+Build a staged VPK without installing it (replace the placeholder paths):
 
-Close Deadlock before installing or replacing a VPK. The installer helper is designed to refuse replacement while the game is running and to verify the copied hash.
+```powershell
+powershell -ExecutionPolicy Bypass -File .\tools\build_vpk.ps1 `
+  -CsdkRoot "<path to Reduced CSDK 12>" `
+  -GameRoot "<Deadlock install directory>" `
+  -OutputVpk ".\dist\pak99_dir.vpk"
+```
 
-## Important repository-sync note
+The build uses the current installed Deadlock resources and a compatible Source 2 / Deadlock ResourceCompiler and VPK packer. Build output, generated Valve-derived resources, extracted stock resources, compiled files, backups, and VPK packages must stay outside tracked source and are ignored by Git. The packer is considered complete only after output stabilization and validation.
 
-The GitHub `main` branch currently contains the original source snapshot from 28 September 2026. The latest runtime-tested post-update working tree was developed locally after that snapshot and must be synchronized before this repository can be treated as a complete reproduction of the currently working VPK.
+Close Deadlock before installing or replacing a VPK. The installer refuses to replace it while the game is running, backs up the current slot, and verifies the installed hash:
 
-In particular, do not assume the current `main` build scripts / legacy sound registration files exactly match the latest runtime-tested build until that source sync is completed.
+```powershell
+.\tools\install_built_vpk.ps1 -GameRoot "<Deadlock install directory>" -BuiltVpk ".\dist\pak99_dir.vpk"
+```
 
 ## Repository layout
 

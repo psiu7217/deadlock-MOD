@@ -19,6 +19,7 @@
 
     var State = {
         rootPanel: null,
+        uiTreeRoot: null,
         clockPanel: null,
         currentTime: null,
         ignoredMode: false,
@@ -29,13 +30,13 @@
         return !!(panel && panel.IsValid && panel.IsValid());
     }
 
-    function getRoot() {
+    function getUiTreeRoot() {
+        if (isValidPanel(State.uiTreeRoot)) {
+            return State.uiTreeRoot;
+        }
+
         var top = CTX;
         var guard = 0;
-
-        if (isValidPanel(State.rootPanel)) {
-            return State.rootPanel;
-        }
 
         while (top && top.GetParent && top.GetParent() && guard < 50) {
             top = top.GetParent();
@@ -43,11 +44,23 @@
         }
 
         if (!top) {
+            State.uiTreeRoot = null;
             State.rootPanel = null;
             return null;
         }
 
-        State.rootPanel = top.FindChildTraverse
+        State.uiTreeRoot = top;
+        State.rootPanel = null;
+        return top;
+    }
+
+    function getRoot() {
+        if (isValidPanel(State.rootPanel)) {
+            return State.rootPanel;
+        }
+
+        var top = getUiTreeRoot();
+        State.rootPanel = top && top.FindChildTraverse
             ? (top.FindChildTraverse('Hud') || top)
             : top;
 
@@ -252,5 +265,6 @@
         getRoot: getRoot
     };
 
+    $.Msg('[DLTK][Core] initialized\n');
     $.Schedule(1.0, loop);
 })();
