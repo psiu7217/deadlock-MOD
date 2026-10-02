@@ -14,9 +14,9 @@ use `CODEX_INSTALL.md` and the repository's one-shot installer:
 tools/install_release.ps1
 ```
 
-For a normal install, do **not** manually reproduce the installer logic. Do not clone/build the source, scan the VPK, research Deadlock Mod Manager, inspect broad game directories, or invent PowerShell/CMD commands for editing `gameinfo.gi`.
+For a normal install, do **not** manually reproduce the installer logic. Do not clone/build the source, inspect the installer line-by-line before running it, scan the VPK, research Deadlock Mod Manager, inspect broad game directories, or invent PowerShell/CMD commands for editing `gameinfo.gi`.
 
-The intended flow is:
+The intended flow is only:
 
 1. Download `tools/install_release.ps1` from this repository.
 2. Run it with Windows PowerShell.
