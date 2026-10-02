@@ -16,6 +16,30 @@ function Get-CanonicalLine {
     return (($Line.Trim()) -replace '[\t ]+', ' ')
 }
 
+function Download-File {
+    param(
+        [Parameter(Mandatory = $true)][string]$Uri,
+        [Parameter(Mandatory = $true)][string]$OutFile
+    )
+
+    try {
+        Invoke-WebRequest -UseBasicParsing -Uri $Uri -OutFile $OutFile -ErrorAction Stop
+        return
+    } catch {
+        Remove-Item -LiteralPath $OutFile -Force -ErrorAction SilentlyContinue
+    }
+
+    $curl = Get-Command curl.exe -ErrorAction SilentlyContinue
+    if (-not $curl) {
+        throw "Download failed with Invoke-WebRequest and curl.exe is unavailable: $Uri"
+    }
+
+    & $curl.Source -fL $Uri -o $OutFile
+    if ($LASTEXITCODE -ne 0 -or -not (Test-Path -LiteralPath $OutFile -PathType Leaf)) {
+        throw "Download failed: $Uri"
+    }
+}
+
 function Find-DeadlockRoot {
     $steamRoots = @()
 
@@ -318,7 +342,7 @@ try {
     $download = Join-Path $tempDir 'DLTK_Runes_v1.0.0.vpk'
 
     Write-Output 'Downloading DLTK v1.0.0...'
-    Invoke-WebRequest -UseBasicParsing -Uri $ReleaseUrl -OutFile $download
+    Download-File -Uri $ReleaseUrl -OutFile $download
 
     $item = Get-Item -LiteralPath $download
     if ($item.Length -ne $ExpectedSize) {
