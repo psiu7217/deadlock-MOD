@@ -2,40 +2,31 @@
 
 Deadlock Personal Toolkit (DLTK) is a client-side Source 2 / Panorama mod.
 
-## Install task: use the fast path
+## Installation tasks
 
-If the user says something like:
+If the user asks to install this mod, for example:
 
 > Install this Deadlock mod for me: https://github.com/psiu7217/deadlock-MOD
 
-read `CODEX_INSTALL.md` and execute its **FAST INSTALL** end-to-end.
+use `CODEX_INSTALL.md` and the repository's one-shot installer:
 
-That single request authorizes the documented normal install. Do not ask for intermediate confirmation for download, backup, the documented five-line `gameinfo.gi` patch, VPK copy, or final verification.
+```text
+tools/install_release.ps1
+```
 
-For a normal v1.0.0 install:
+For a normal install, do **not** manually reproduce the installer logic. Do not clone/build the source, scan the VPK, research Deadlock Mod Manager, inspect broad game directories, or invent PowerShell/CMD commands for editing `gameinfo.gi`.
 
-- do **not** clone the repository;
-- do **not** inspect/build the source;
-- do **not** run build validators;
-- do **not** scan the VPK contents;
-- do **not** research Deadlock Mod Manager/source online;
-- do **not** perform broad Steam/game-file scans once the Deadlock install is found;
-- use the exact prebuilt release asset and exact mount patch documented in `CODEX_INSTALL.md`.
+The intended flow is:
 
-Only the following checks are required:
+1. Download `tools/install_release.ps1` from this repository.
+2. Run it with Windows PowerShell.
+3. On success, report: **DLTK installed; you can launch Deadlock now.**
 
-1. Find the actual Deadlock install.
-2. Confirm Deadlock is not running.
-3. Download the exact stable VPK and verify its SHA-256 once before install.
-4. Read only the current `SearchPaths` area of `gameinfo.gi`; if the verified mount lines are missing and the normal `Game citadel` / `Game core` anchors exist, back up the file and apply the documented five-line patch.
-5. Copy the VPK to the documented addon path and verify the installed SHA-256.
-6. Finish with: **installation complete; you can launch Deadlock now**.
+The installer already finds Steam/Deadlock, checks whether the game is running, downloads and hashes the stable VPK, backs up and patches the addon mount when required, installs `pak99_dir.vpk`, and verifies the installed hash.
 
-### Stop only when necessary
+If the installer stops because Deadlock is running, ask the user to close it and rerun the same script. For other installer errors, report the exact error instead of improvising a different install path unless the user explicitly requests debugging.
 
-Stop instead of guessing only if Deadlock is running, the VPK hash is wrong, the expected `gameinfo.gi` anchors are missing/materially different, filesystem access fails, or replacing an existing `pak99_dir.vpk` would overwrite an unrelated mod.
-
-Never kill or launch Deadlock automatically. Never replace the whole `gameinfo.gi`. Preserve unrelated mods and current build-specific settings.
+Never kill or launch Deadlock automatically.
 
 ## Development tasks
 
